@@ -733,26 +733,13 @@ else{
 
 
 await addDoc(
-
-collection(
-db,
-"products"
-),
-
+collection(db,"products"),
 {
-
-...productData,
-
-
-createdAt:
-serverTimestamp()
-
-
-
+    ...productData,
+    active: true,
+    createdAt: serverTimestamp()
 }
-
 );
-
 
 
 }
@@ -1406,22 +1393,13 @@ async function loadBanners(){
 
 
 const snapshot =
-await getDocs(
-
-query(
-
-collection(
-db,
-"banners"
-),
-
-orderBy(
-"priority",
-"asc"
-)
-
-)
-
+await addDoc(
+collection(db,"banners"),
+{
+    ...data,
+    active: true,
+    createdAt: serverTimestamp()
+}
 );
 
 

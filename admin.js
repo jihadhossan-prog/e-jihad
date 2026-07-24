@@ -3238,3 +3238,56 @@ error
 
 
 });
+
+/* =========================================================
+FORCE CLICK ROUTER (DIRECT FIX)
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+    initNavigation();
+});
+
+// পেজ অলরেডি লোড হয়ে থাকলে সাথে সাথেই রান করবে
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    initNavigation();
+}
+
+function initNavigation() {
+    const menuButtons = document.querySelectorAll(".menu-item");
+    const sections = document.querySelectorAll(".admin-section");
+
+    menuButtons.forEach(button => {
+        button.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const targetSectionId = button.getAttribute("data-section");
+
+            if (!targetSectionId) return;
+
+            
+            sections.forEach(sec => {
+                sec.classList.remove("active");
+                sec.style.setProperty("display", "none", "important");
+            });
+
+            menuButtons.forEach(btn => btn.classList.remove("active"));
+
+       
+            const activeSection = document.getElementById(targetSectionId);
+            if (activeSection) {
+                activeSection.classList.add("active");
+                activeSection.style.setProperty("display", "block", "important");
+                button.classList.add("active");
+
+                
+                const pageTitle = document.getElementById("pageTitle");
+                if (pageTitle) {
+                    pageTitle.textContent = button.innerText.trim();
+                }
+            } else {
+                console.error("Section not found with ID:", targetSectionId);
+            }
+        });
+    });
+}

@@ -8,22 +8,22 @@ import {
     serverTimestamp
 } from "./firebase-config.js";
 
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+// ✅ এই সম্পূর্ণ Import লাইনটি admin.js এর শুরুতে বসিয়ে দিন
 import { 
     getFirestore, 
     doc, 
     getDoc, 
     setDoc, 
+    addDoc,       /* <-- এটি মিসিং ছিল (add না হওয়ার কারণ) */
     updateDoc, 
     deleteDoc, 
     collection, 
     getDocs, 
+    query,        /* <-- এটি মিসিং ছিল (লোড না হওয়ার কারণ) */
+    where,
+    orderBy,
     onSnapshot 
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-
 
 /* =========================================================
 ADMIN APP STATE

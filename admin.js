@@ -9,22 +9,17 @@ import {
 } from "./firebase-config.js";
 
 
-import {
-
-    collection,
-    addDoc,
-    updateDoc,
-    deleteDoc,
-    doc,
-    getDocs,
-    getDoc,
-    query,
-    orderBy,
-    onSnapshot,
-    where
-
+import { 
+    getFirestore, 
+    doc, 
+    getDoc, 
+    setDoc, 
+    updateDoc, 
+    deleteDoc, 
+    collection, 
+    getDocs, 
+    onSnapshot 
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
 
 
 

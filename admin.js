@@ -9,6 +9,7 @@ import {
 } from "./firebase-config.js";
 
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { 
     getFirestore, 
     doc, 
@@ -20,7 +21,7 @@ import {
     getDocs, 
     onSnapshot 
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 
 
@@ -149,7 +150,6 @@ mobileButton?.addEventListener(
 /* =========================================================
 AUTH CHECK (UPDATED)
 ========================================================= */
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 auth.onAuthStateChanged(async user => {
     if (!user) {
@@ -158,7 +158,7 @@ auth.onAuthStateChanged(async user => {
     }
 
     try {
-        
+       
         const userDoc = await getDoc(doc(db, "users", user.uid));
         
         if (!userDoc.exists() || userDoc.data().role !== "admin") {
@@ -167,12 +167,12 @@ auth.onAuthStateChanged(async user => {
             return;
         }
 
-      
+
         const adminName = document.getElementById("adminName");
         const adminAvatar = document.getElementById("adminAvatar");
 
         if (adminName) {
-            adminName.textContent = userDoc.data().name || user.displayName || "Administrator";
+            adminName.textContent = userDoc.data().name || user.displayName || "Admin";
         }
 
         if (adminAvatar && user.photoURL) {
@@ -180,7 +180,7 @@ auth.onAuthStateChanged(async user => {
         }
 
     } catch (error) {
-        console.error("Auth check failed:", error);
+        console.error("Auth verification error:", error);
         window.location.href = "index.html";
     }
 });

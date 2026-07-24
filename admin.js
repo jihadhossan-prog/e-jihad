@@ -60,152 +60,67 @@ const AdminState = {
 
 
 
-
-
 /* =========================================================
-SECTION ROUTER
+SECTION ROUTER (FIXED)
 ========================================================= */
 
+const menuItems = document.querySelectorAll(".menu-item");
+const sections = document.querySelectorAll(".admin-section");
 
-const menuItems =
-document.querySelectorAll(
-    ".menu-item"
-);
+function openSection(sectionName) {
+    if (!sectionName) return;
 
-
-const sections =
-document.querySelectorAll(
-    ".admin-section"
-);
-
-
-
-function openSection(sectionName){
-
-
-    sections.forEach(section=>{
-
-
-        section.classList.toggle(
-
-            "active",
-
-            section.id === sectionName
-
-        );
-
-
+    
+    sections.forEach(section => {
+        if (section.id === sectionName) {
+            section.classList.add("active");
+            section.style.display = "block"; 
+        } else {
+            section.classList.remove("active");
+            section.style.display = "none";
+        }
     });
 
-
-
-    menuItems.forEach(item=>{
-
-
+    
+    menuItems.forEach(item => {
         item.classList.toggle(
-
             "active",
-
             item.dataset.section === sectionName
-
         );
-
-
     });
 
-
-
-    const title =
-    document.getElementById(
-        "pageTitle"
-    );
-
-
-    if(title){
-
-
-        title.textContent =
-
-        sectionName
-        .charAt(0)
-        .toUpperCase()
-        +
-        sectionName.slice(1);
-
-
-
+   
+    const title = document.getElementById("pageTitle");
+    if (title) {
+        title.textContent = sectionName.charAt(0).toUpperCase() + sectionName.slice(1);
     }
 
-
-
-    AdminState.currentSection =
-    sectionName;
-
-
-
-    history.pushState(
-
-        null,
-
-        "",
-
-        "#" + sectionName
-
-    );
-
-
+    AdminState.currentSection = sectionName;
+    location.hash = sectionName;
 }
 
 
-
-
-menuItems.forEach(item=>{
-
-
-    item.addEventListener(
-
-        "click",
-
-        ()=>{
-
-
-            openSection(
-
-                item.dataset.section
-
-            );
-
-
+document.addEventListener("click", (event) => {
+    const menuItem = event.target.closest(".menu-item");
+    if (menuItem) {
+        event.preventDefault();
+        const sectionName = menuItem.dataset.section;
+        if (sectionName) {
+            openSection(sectionName);
         }
-
-
-    );
-
-
-});
-
-
-
-
-window.addEventListener(
-
-"load",
-
-()=>{
-
-
-    const hash =
-    location.hash.replace("#","");
-
-
-    if(hash){
-
-        openSection(hash);
-
     }
-
-
 });
+
+
+function handleHashChange() {
+    const hash = location.hash.replace("#", "") || "dashboard";
+    openSection(hash);
+}
+
+window.addEventListener("hashchange", handleHashChange);
+
+
+handleHashChange();
 
 
 /* =========================================================

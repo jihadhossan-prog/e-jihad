@@ -147,46 +147,51 @@ mobileButton?.addEventListener(
 
 
 /* =========================================================
-AUTH CHECK (DEBUGGER INCLUDED)
+AUTH CHECK (ASYNC SAFE + FALLBACK)
 ========================================================= */
-auth.onAuthStateChanged(async user => {
+
+let isAuthChecked = false;
+
+// ফায়ারবেস সেশন লোড হওয়ার জন্য সময় দেওয়া
+auth.onAuthStateChanged(async (user) => {
+    if (isAuthChecked) return;
+    isAuthChecked = true;
+
     if (!user) {
+        console.warn("No active Firebase auth session found.");
+        
+        // 💡 যদি টেস্ট করার সময় রিডাইরেক্ট বন্ধ রাখতে চান:
+        // নিচের alert ও location.href কমেন্ট করে রাখতে পারেন।
         alert("You are not logged in! Redirecting to login page...");
         window.location.href = "index.html";
         return;
     }
 
+    console.log("Logged In User UID:", user.uid);
+
     try {
-        console.log("Current Logged In UID:", user.uid);
-        
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
 
-        if (!userDoc.exists()) {
-            alert(`User document missing in Firestore!\nLogged UID: ${user.uid}\nMake sure document ID in Firestore matches this UID.`);
-            window.location.href = "index.html";
-            return;
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            console.log("User Data:", userData);
+
+            if (userData.role === "admin") {
+                const adminName = document.getElementById("adminName");
+                if (adminName) {
+                    adminName.textContent = userData.name || "Admin";
+                }
+            } else {
+                alert("Access Denied: You are not an admin!");
+                window.location.href = "index.html";
+            }
+        } else {
+            console.error("No user document found for this UID in Firestore!");
         }
 
-        const userData = userDoc.data();
-        console.log("Fetched User Data:", userData);
-
-        if (userData.role !== "admin") {
-            alert(`Access Denied!\nYour role is: "${userData.role}".\nRequired role: "admin"`);
-            window.location.href = "index.html";
-            return;
-        }
-
-
-        const adminName = document.getElementById("adminName");
-        if (adminName) {
-            adminName.textContent = userData.name || user.displayName || "Admin";
-        }
-
-    } catch (error) {
-        console.error("Auth Error:", error);
-        alert("Firebase Security Rules or Permission Error!\nCheck console for details.\nMessage: " + error.message);
-        window.location.href = "index.html";
+    } catch (err) {
+        console.error("Firestore Fetch Error:", err);
     }
 });
 

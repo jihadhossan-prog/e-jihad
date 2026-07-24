@@ -242,73 +242,44 @@ mobileButton?.addEventListener(
 
 
 
-
-
 /* =========================================================
-AUTH CHECK
+AUTH CHECK (UPDATED)
 ========================================================= */
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-
-auth.onAuthStateChanged(
-
-async user=>{
-
-
-    if(!user){
-
-
-        window.location.href =
-        "index.html";
-
-
+auth.onAuthStateChanged(async user => {
+    if (!user) {
+        window.location.href = "index.html";
         return;
-
-
     }
 
+    try {
+        
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        
+        if (!userDoc.exists() || userDoc.data().role !== "admin") {
+            alert("Access Denied: You are not an administrator!");
+            window.location.href = "index.html";
+            return;
+        }
 
+        
+        const adminName = document.getElementById("adminName");
+        const adminAvatar = document.getElementById("adminAvatar");
 
+        if (adminName) {
+            adminName.textContent = userDoc.data().name || user.displayName || "Administrator";
+        }
 
-    const adminName =
-    document.getElementById(
-        "adminName"
-    );
+        if (adminAvatar && user.photoURL) {
+            adminAvatar.src = user.photoURL;
+        }
 
-
-    const adminAvatar =
-    document.getElementById(
-        "adminAvatar"
-    );
-
-
-
-    if(adminName){
-
-
-        adminName.textContent =
-
-        user.displayName ||
-        "Administrator";
-
-
+    } catch (error) {
+        console.error("Auth check failed:", error);
+        window.location.href = "index.html";
     }
-
-
-
-    if(adminAvatar && user.photoURL){
-
-
-        adminAvatar.src =
-        user.photoURL;
-
-
-    }
-
-
-
-}
-
-);
+});
 
 
 /* =========================================================

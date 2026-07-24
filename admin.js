@@ -77,7 +77,7 @@ function openSection(sectionName) {
             section.style.display = "block"; 
         } else {
             section.classList.remove("active");
-            section.style.display = "none";
+            section.style.display = "none"; 
         }
     });
 
@@ -89,39 +89,31 @@ function openSection(sectionName) {
         );
     });
 
-   
+  
     const title = document.getElementById("pageTitle");
     if (title) {
         title.textContent = sectionName.charAt(0).toUpperCase() + sectionName.slice(1);
     }
 
     AdminState.currentSection = sectionName;
-    location.hash = sectionName;
 }
 
 
-document.addEventListener("click", (event) => {
-    const menuItem = event.target.closest(".menu-item");
-    if (menuItem) {
-        event.preventDefault();
-        const sectionName = menuItem.dataset.section;
-        if (sectionName) {
-            openSection(sectionName);
-        }
-    }
+menuItems.forEach(item => {
+    item.addEventListener("click", (e) => {
+        e.preventDefault();
+        const sectionName = item.dataset.section;
+        openSection(sectionName);
+    });
 });
 
 
-function handleHashChange() {
-    const hash = location.hash.replace("#", "") || "dashboard";
-    openSection(hash);
-}
-
-window.addEventListener("hashchange", handleHashChange);
+document.addEventListener("DOMContentLoaded", () => {
+    openSection("dashboard");
+});
 
 
-handleHashChange();
-
+openSection("dashboard");
 
 /* =========================================================
 MOBILE MENU

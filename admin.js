@@ -146,44 +146,50 @@ mobileButton?.addEventListener(
 
 
 
-
 /* =========================================================
-AUTH CHECK (UPDATED)
+AUTH CHECK (DEBUGGER INCLUDED)
 ========================================================= */
-
 auth.onAuthStateChanged(async user => {
     if (!user) {
+        alert("You are not logged in! Redirecting to login page...");
         window.location.href = "index.html";
         return;
     }
 
     try {
-       
-        const userDoc = await getDoc(doc(db, "users", user.uid));
+        console.log("Current Logged In UID:", user.uid);
         
-        if (!userDoc.exists() || userDoc.data().role !== "admin") {
-            alert("Access Denied: You are not an administrator!");
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (!userDoc.exists()) {
+            alert(`User document missing in Firestore!\nLogged UID: ${user.uid}\nMake sure document ID in Firestore matches this UID.`);
+            window.location.href = "index.html";
+            return;
+        }
+
+        const userData = userDoc.data();
+        console.log("Fetched User Data:", userData);
+
+        if (userData.role !== "admin") {
+            alert(`Access Denied!\nYour role is: "${userData.role}".\nRequired role: "admin"`);
             window.location.href = "index.html";
             return;
         }
 
 
         const adminName = document.getElementById("adminName");
-        const adminAvatar = document.getElementById("adminAvatar");
-
         if (adminName) {
-            adminName.textContent = userDoc.data().name || user.displayName || "Admin";
-        }
-
-        if (adminAvatar && user.photoURL) {
-            adminAvatar.src = user.photoURL;
+            adminName.textContent = userData.name || user.displayName || "Admin";
         }
 
     } catch (error) {
-        console.error("Auth verification error:", error);
+        console.error("Auth Error:", error);
+        alert("Firebase Security Rules or Permission Error!\nCheck console for details.\nMessage: " + error.message);
         window.location.href = "index.html";
     }
 });
+
 
 /* =========================================================
 PRODUCT MANAGEMENT

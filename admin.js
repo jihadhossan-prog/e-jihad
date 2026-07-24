@@ -157,15 +157,7 @@ auth.onAuthStateChanged(async (user) => {
     if (isAuthChecked) return;
     isAuthChecked = true;
 
-    if (!user) {
-        console.warn("No active Firebase auth session found.");
-        
-        // 💡 যদি টেস্ট করার সময় রিডাইরেক্ট বন্ধ রাখতে চান:
-        // নিচের alert ও location.href কমেন্ট করে রাখতে পারেন।
-        alert("You are not logged in! Redirecting to login page...");
-        window.location.href = "index.html";
-        return;
-    }
+    
 
     console.log("Logged In User UID:", user.uid);
 

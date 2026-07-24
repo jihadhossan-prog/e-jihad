@@ -813,46 +813,41 @@ class="remove-link">
 
 loadProducts();
 
+// Category Form Submit Event
+const categoryForm = document.getElementById("categoryForm"); // বা আপনার ফর্মের ID
 
-/* =========================================================
-CATEGORY MANAGEMENT
-========================================================= */
+if (categoryForm) {
+    categoryForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
+        const nameInput = document.getElementById("categoryName"); // আপনার ইনপুট ID
+        const imageInput = document.getElementById("categoryImage"); // আপনার ইনপুট ID
 
-const categoryForm =
-document.getElementById(
-    "categoryForm"
-);
+        const categoryData = {
+            name: nameInput ? nameInput.value.trim() : "",
+            image: imageInput ? imageInput.value.trim() : "",
+            createdAt: serverTimestamp()
+        };
 
+        if (!categoryData.name) {
+            alert("Please enter category name!");
+            return;
+        }
 
-const categoryList =
-document.getElementById(
-    "categoryList"
-);
+        try {
+            // Firestore-এ ডাটা এড করা
+            await addDoc(collection(db, "categories"), categoryData);
+            alert("Category Added Successfully!");
+            
+            categoryForm.reset(); // ফর্ম ক্লিয়ার করা
+            if (typeof loadCategories === "function") loadCategories(); // লিস্ট রিফ্রেশ করা
 
-
-
-async function loadCategories(){
-
-
-    const snapshot =
-    await getDocs(
-
-        query(
-
-            collection(
-                db,
-                "categories"
-            ),
-
-            orderBy(
-                "createdAt",
-                "desc"
-            )
-
-        )
-
-    );
+        } catch (error) {
+            console.error("Error adding category: ", error);
+            alert("Failed to add category: " + error.message);
+        }
+    });
+}
 
 
 

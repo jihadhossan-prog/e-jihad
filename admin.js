@@ -3238,54 +3238,58 @@ error
 });
 
 /* =========================================================
-FORCE CLICK ROUTER (DIRECT FIX)
+   TEMP NAVIGATION CHECK (NO AUTH LOCK)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-    initNavigation();
+    setupNavigation();
 });
 
-// পেজ অলরেডি লোড হয়ে থাকলে সাথে সাথেই রান করবে
+// পেজ অলরেডি লোড হয়ে থাকলে সরাসরি রান করবে
 if (document.readyState === "complete" || document.readyState === "interactive") {
-    initNavigation();
+    setupNavigation();
 }
 
-function initNavigation() {
-    const menuButtons = document.querySelectorAll(".menu-item");
+function setupNavigation() {
+    const menuItems = document.querySelectorAll(".menu-item");
     const sections = document.querySelectorAll(".admin-section");
 
-    menuButtons.forEach(button => {
-        button.addEventListener("click", (e) => {
+    menuItems.forEach(item => {
+        item.addEventListener("click", (e) => {
             e.preventDefault();
             e.stopPropagation();
 
-            const targetSectionId = button.getAttribute("data-section");
+            const targetId = item.getAttribute("data-section");
+            if (!targetId) return;
 
-            if (!targetSectionId) return;
-
-            
+            // ১. সব সেকশন হাইড করা
             sections.forEach(sec => {
                 sec.classList.remove("active");
                 sec.style.setProperty("display", "none", "important");
             });
 
-            menuButtons.forEach(btn => btn.classList.remove("active"));
+            // ২. সব বাটন আন-সিলেক্ট করা
+            menuItems.forEach(btn => btn.classList.remove("active"));
 
-       
-            const activeSection = document.getElementById(targetSectionId);
-            if (activeSection) {
-                activeSection.classList.add("active");
-                activeSection.style.setProperty("display", "block", "important");
-                button.classList.add("active");
+            // ৩. সিলেক্টেড সেকশন ওপেন করা
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.classList.add("active");
+                targetSection.style.setProperty("display", "block", "important");
+                item.classList.add("active");
 
-                
+                // টাইটেল আপডেট
                 const pageTitle = document.getElementById("pageTitle");
                 if (pageTitle) {
-                    pageTitle.textContent = button.innerText.trim();
+                    pageTitle.textContent = item.innerText.trim();
                 }
             } else {
-                console.error("Section not found with ID:", targetSectionId);
+                console.error("Section missing for ID:", targetId);
             }
         });
     });
+
+    // ডিফল্টভাবে Dashboard দেখাবে
+    const dashboardBtn = document.querySelector('.menu-item[data-section="dashboard"]');
+    if (dashboardBtn) dashboardBtn.click();
 }

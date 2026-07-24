@@ -48,7 +48,7 @@ import {
 
 /* Firebase Configuration */
 
-const firebaseConfig = {
+const firebaseConfig = { 
 
 
     apiKey: "AIzaSyDPT3fRRT8m_zHlpEfo3wuuWe2NRsHHUqs",
